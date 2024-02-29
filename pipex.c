@@ -6,12 +6,13 @@
 /*   By: nbenyahy <nbenyahy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 17:36:06 by nbenyahy          #+#    #+#             */
-/*   Updated: 2024/02/28 00:40:15 by nbenyahy         ###   ########.fr       */
+/*   Updated: 2024/02/29 16:17:41 by nbenyahy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Extra-Library/libft.h"
 #include <stdio.h>
+#include <fcntl.h>
 
 char	**get_env_path(char *envp[])
 {
@@ -21,7 +22,7 @@ char	**get_env_path(char *envp[])
 	int		i;
 
 	while (!ft_strnstr(*envp, "PATH=", 5))
-		envp++;
+		envp++; 
 	helper = ft_substr(*envp, 5, ft_strlen(*envp) - 5);
 	if (!helper)
 		return (NULL);
@@ -56,14 +57,23 @@ char	*check_cmd_access(char *cmd, char **path)
 	perror("command not faund");
 	return (NULL);
 }
-
+void	free_2d_arr(char **arr)
+{
+	while (*arr != NULL)
+	{
+		free(*arr);
+		*arr =NULL;
+		arr++;
+	}
+}
 int	main(int argc, char *argv[], char *envp[])
 {
-	int		fd[2];
 	int		i;
 	int		pid;
 	char	**argvcmd;
 	char	*path;
+	int		(*fd)[2];
+	int		pip;
 
 	if (argc < 4)
 		return (ft_printf("arr in nb of args"));
@@ -73,15 +83,43 @@ int	main(int argc, char *argv[], char *envp[])
 		return (1);
 	}
 	i = 2;
-	while (i < argc)
+	fd = malloc((argc - 2) * sizeof(int[2]));
+	while (i < argc - 1)
 	{
 		argvcmd = ft_split(argv[i], ' ');
 		path = check_cmd_access(argvcmd[0], get_env_path(envp));
 		if (path == NULL)
 			return (1);
+		pip = pipe(fd[i - 2]);
+		if (pip == -1)
+			perror("pipe error");
 		pid = fork();
-		if (execve(path, argvcmd, NULL) == -1)
-			perror("err in execve");
+		if (pid == 0) {
+			if (i == 2 && argc >= 5)
+			{
+				dup2(fd[i - 2][1], STDOUT_FILENO);
+				close(fd[i - 2][0]);
+			}
+			else if (i == argc - 2 && argc >= 5){
+				close(fd[i - 3][1]);
+				dup2(fd[i - 3][0], STDIN_FILENO);
+			}
+			else if(i > 2)
+			{
+				close(fd[i - 3][1]);
+				dup2(fd[i - 3][0], STDIN_FILENO);
+				dup2(fd[i - 2][1], STDOUT_FILENO);
+			}
+			if (execve(path, argvcmd, NULL) == -1)
+				perror("err in execve");
+		}
 		i++;
+
+		free(path);
+		path = NULL;
+		free_2d_arr(argvcmd);
+		free(argvcmd);
+		argvcmd = NULL;
 	}
+
 }
