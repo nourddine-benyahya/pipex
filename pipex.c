@@ -6,7 +6,7 @@
 /*   By: nbenyahy <nbenyahy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 17:36:06 by nbenyahy          #+#    #+#             */
-/*   Updated: 2024/02/29 16:17:41 by nbenyahy         ###   ########.fr       */
+/*   Updated: 2024/02/29 20:53:42 by nbenyahy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,7 @@ int	main(int argc, char *argv[], char *envp[])
 	char	*path;
 	int		(*fd)[2];
 	int		pip;
+	int		io[2];
 
 	if (argc < 4)
 		return (ft_printf("arr in nb of args"));
@@ -82,6 +83,8 @@ int	main(int argc, char *argv[], char *envp[])
 		perror("error in io_files (io_file not exist)");
 		return (1);
 	}
+	io[1] = open(argv[argc - 1], O_RDWR);
+	io[0] = open(argv[1], O_RDWR);
 	i = 2;
 	fd = malloc((argc - 2) * sizeof(int[2]));
 	while (i < argc - 1)
@@ -95,31 +98,35 @@ int	main(int argc, char *argv[], char *envp[])
 			perror("pipe error");
 		pid = fork();
 		if (pid == 0) {
+			// for the first cmd
 			if (i == 2 && argc >= 5)
 			{
+				dup2(io[0], STDIN_FILENO);
 				dup2(fd[i - 2][1], STDOUT_FILENO);
 				close(fd[i - 2][0]);
 			}
+			// for the last cmd
 			else if (i == argc - 2 && argc >= 5){
 				close(fd[i - 3][1]);
 				dup2(fd[i - 3][0], STDIN_FILENO);
+				dup2(io[1], STDOUT_FILENO);
 			}
-			else if(i > 2)
+			// for the middel cmds
+			else if(i != argc - 2)
 			{
 				close(fd[i - 3][1]);
 				dup2(fd[i - 3][0], STDIN_FILENO);
 				dup2(fd[i - 2][1], STDOUT_FILENO);
 			}
-			if (execve(path, argvcmd, NULL) == -1)
+			if (execve(path, argvcmd, envp) == -1)
 				perror("err in execve");
 		}
+        // close(fd[i - 2][1]);
 		i++;
-
 		free(path);
 		path = NULL;
 		free_2d_arr(argvcmd);
 		free(argvcmd);
 		argvcmd = NULL;
 	}
-
 }
