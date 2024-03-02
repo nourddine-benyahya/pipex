@@ -6,7 +6,7 @@
 /*   By: nbenyahy <nbenyahy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 17:36:06 by nbenyahy          #+#    #+#             */
-/*   Updated: 2024/03/02 18:27:03 by nbenyahy         ###   ########.fr       */
+/*   Updated: 2024/03/02 19:48:28 by nbenyahy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,6 +183,5 @@ int	main(int argc, char *argv[], char *envp[])
 		return (1);
 	}
 	execute_command(argc, argv, envp);
-	system("leaks a.out");
 	return (0);
 }
