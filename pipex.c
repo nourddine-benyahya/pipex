@@ -6,50 +6,28 @@
 /*   By: nbenyahy <nbenyahy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 17:36:06 by nbenyahy          #+#    #+#             */
-/*   Updated: 2024/03/02 19:48:28 by nbenyahy         ###   ########.fr       */
+/*   Updated: 2024/03/07 19:26:07 by nbenyahy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Extra-Library/libft.h"
 #include <stdio.h>
 #include <fcntl.h>
+#include "pipex.h"
 
-typedef struct t_list{
-	char	**argvcmd;
-	char	*path;
-	char	**fullpath;
-	int		pip;
-	int		io[2];
-	int		i;
-	int		pid;
-	int		(*fd)[2];
-} v_list;
-
-char	**get_env_path(char *envp[])
+void	free_2d_arr(char **arr)
 {
-	char	*helper;
-	char	**path;
-	char	*backup;
-	int		i;
+	int	i;
 
-	while (!ft_strnstr(*envp, "PATH=", 5))
-		envp++; 
-	helper = ft_substr(*envp, 5, ft_strlen(*envp) - 5);
-	if (!helper)
-		return (NULL);
-	path = ft_split(helper, ':');
-	if (!path)
-		return (NULL);
-	free(helper);
 	i = 0;
-	while (path[i] != NULL)
+	while (arr[i] != NULL)
 	{
-		backup = path[i];
-		free(path[i]);
-		path[i] = ft_strjoin(backup, "/");
+		free(arr[i]);
+		arr[i] = NULL;
 		i++;
 	}
-	return (path);
+	free(arr);
+	arr = NULL;
 }
 
 char	*check_cmd_access(char *cmd, char **path)
@@ -68,17 +46,6 @@ char	*check_cmd_access(char *cmd, char **path)
 	}
 	perror("command not faund");
 	return (NULL);
-}
-
-void	free_2d_arr(char ***arr)
-{
-	while (**arr != NULL)
-	{
-		free(**arr);
-		**arr = NULL;
-		(*arr)++;
-	}
-	arr = NULL;
 }
 
 int	duping(int i, int (*fd)[2], int io[2], int argc)
@@ -105,68 +72,45 @@ int	duping(int i, int (*fd)[2], int io[2], int argc)
 	return (0);
 }
 
-char	**ft_speacialsplit(char *input)
+int	command_loop(t_var *var, int argc, char *argv[], char *envp[])
 {
-	char	**arr;
-	char	*str;
-	char	*str2;
-
-	if (ft_strchr(input, 39) != NULL)
+	while (var->i < argc - 1)
 	{
-		arr = malloc(sizeof(char *) * 3);
-		if (!arr)
-			return (NULL);
-		str = ft_substr(strchr(input, ' ') + 2, 0, \
-			ft_strlen(strchr(input, ' ') + 2) - 1);
-		if (!str)
-			return (free(arr),NULL);
-		str2 = ft_substr(input,0 , strlen(input) - strlen(str) - 3);
-		if (!str2)
-			return (free(arr), free(str2), NULL); 
-		arr[0] = str2;
-		arr[1] = str;
-		arr[2] = NULL;
+		var->argvcmd = cmdsplait(argv[var->i]);
+		var->path = check_cmd_access(var->argvcmd[0], var->fullpath);
+		if (var->path == NULL)
+			return (1);
+		var->pip = pipe(var->fd[var->i - 2]);
+		if (var->pip == -1)
+			perror("pipe error");
+		var->pid = fork();
+		if (var->pid == 0)
+		{
+			duping(var->i, var->fd, var->io, argc);
+			if (execve(var->path, var->argvcmd, envp) == -1)
+				perror("err in execve");
+		}
+		else
+			wait(NULL);
+		close(var->fd[var->i - 2][1]);
+		var->i++;
+		free(var->path);
+		free_2d_arr(var->argvcmd);
 	}
-	else
-		arr = ft_split(input, ' ');
-	return (arr);
+	return (1);
 }
 
-int execute_command(int argc, char *argv[], char *envp[])
+int	execute_command(int argc, char *argv[], char *envp[])
 {
-	v_list	var;
+	t_var	var;
 
 	var.io[1] = open(argv[argc - 1], O_RDWR | O_TRUNC);
 	var.io[0] = open(argv[1], O_RDWR);
 	var.i = 2;
 	var.fd = malloc((argc - 2) * sizeof(int [2]));
 	var.fullpath = get_env_path(envp);
-	while (var.i < argc - 1)
-	{
-		var.argvcmd = ft_speacialsplit(argv[var.i]);
-		var.path = check_cmd_access(var.argvcmd[0], var.fullpath);
-		if (var.path == NULL)
-			return (1);
-		var.pip = pipe(var.fd[var.i - 2]);
-		if (var.pip == -1)
-			perror("pipe error");
-		var.pid = fork();
-		if (var.pid == 0)
-		{
-			duping(var.i, var.fd, var.io, argc);
-			if (execve(var.path, var.argvcmd, envp) == -1)
-				perror("err in execve");
-		}
-		else
-			wait(NULL);
-		close(var.fd[var.i - 2][1]);
-		var.i++;
-		free(var.path);
-		var.path = NULL;
-		free_2d_arr(&var.argvcmd);
-		var.argvcmd = NULL;
-	}
-	free_2d_arr(&var.fullpath);
+	command_loop(&var, argc, argv, envp);
+	free_2d_arr(var.fullpath);
 	free(var.fd);
 	close(var.io[0]);
 	close(var.io[1]);
@@ -183,5 +127,6 @@ int	main(int argc, char *argv[], char *envp[])
 		return (1);
 	}
 	execute_command(argc, argv, envp);
+	// system("leaks a.out");
 	return (0);
 }
