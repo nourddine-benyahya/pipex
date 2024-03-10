@@ -6,7 +6,7 @@
 /*   By: nbenyahy <nbenyahy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/07 19:09:27 by nbenyahy          #+#    #+#             */
-/*   Updated: 2024/03/07 19:09:51 by nbenyahy         ###   ########.fr       */
+/*   Updated: 2024/03/10 20:47:45 by nbenyahy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,8 @@ char	**get_env_path(char *envp[])
 	while (path[i] != NULL)
 	{
 		backup = path[i];
-		free(path[i]);
-		path[i] = ft_strjoin(backup, "/");
+		path[i] = ft_strjoin(path[i], "/");
+		free(backup);
 		i++;
 	}
 	return (path);

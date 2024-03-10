@@ -6,7 +6,7 @@
 /*   By: nbenyahy <nbenyahy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/06 16:12:56 by nbenyahy          #+#    #+#             */
-/*   Updated: 2024/03/07 19:10:04 by nbenyahy         ###   ########.fr       */
+/*   Updated: 2024/03/10 21:13:32 by nbenyahy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ static void	handlquote(char *str, int *i, int *start, t_list **list)
 	*start = *i + 1;
 }
 
-static t_list	*extrasplait(char *str)
+static t_list	*extrasplit(char *str)
 {
 	t_list	*list;
 	int		i;
@@ -56,9 +56,10 @@ static t_list	*extrasplait(char *str)
 
 	i = 0;
 	start = 0;
+	list = NULL;
 	while (str[i])
 	{
-		while (issep(str[i], str[i + 1]))
+		while (str[i] && issep(str[i], str[i + 1]))
 			searchandreplaice(str + i++);
 		if (str[i] == ' ' || str[i + 1] == '\0')
 		{
@@ -69,25 +70,28 @@ static t_list	*extrasplait(char *str)
 				return (list);
 			start = i + 1;
 		}
-		else if (str[i] == 39)
+		else if (str[i] && str[i] == 39)
 			handlquote(str, &i, &start, &list);
 		i++;
 	}
 	return (list);
 }
 
-char	**cmdsplait(char *cmd)
+
+char	**cmdsplit(char *cmd)
 {
-	t_list	*list;
+	t_list	*list = NULL;
 	t_list	*tmp;
 	char	*str;
 	char	**arr;
 	int		i;
 
-	str = strdup(cmd);
-	list = extrasplait(str);
+	list = NULL;
+	str = ft_strdup(cmd);
+	list = extrasplit(cmd);
 	free(str);
 	tmp = list;
+	int siz = ft_lstsize(tmp);
 	arr = malloc((ft_lstsize(tmp) + 1) * sizeof(char *));
 	i = 0;
 	while (tmp)
@@ -97,19 +101,37 @@ char	**cmdsplait(char *cmd)
 		i++;
 	}
 	arr[i] = NULL;
-	ft_lstclear(&list, free);
+	ft_lstclear(&list,free);
 	return (arr);
 }
 
 // int main(int argc, char *argv[])
 // {
 // 	char **arr;
-// 	arr = cmdsplait(argv[1]);
+// 	arr = cmdsplit(argv[1]);
+// 	char **arr2;
+// 	arr2 = cmdsplit(argv[2]);
+// 	char **arr3;
+// 	arr3 = cmdsplit(argv[3]);
 // 	int i = 0;
 // 	while (arr[i])
 // 	{
 // 		printf("%s\n", arr[i]);
 // 		i++;
 // 	}
-// 	system("leaks a.out");
+
+// 	 i = 0;
+// 	while (arr2[i])
+// 	{
+// 		printf("%s\n", arr2[i]);
+// 		i++;
+// 	}
+
+// 	 i = 0;
+// 	while (arr3[i])
+// 	{
+// 		printf("%s\n", arr3[i]);
+// 		i++;
+// 	}
+// 	// system("leaks a.out");
 // }
