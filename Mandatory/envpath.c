@@ -6,11 +6,10 @@
 /*   By: nbenyahy <nbenyahy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/07 19:09:27 by nbenyahy          #+#    #+#             */
-/*   Updated: 2024/03/10 20:47:45 by nbenyahy         ###   ########.fr       */
+/*   Updated: 2024/03/12 07:41:30 by nbenyahy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Extra-Library/libft.h"
 #include "pipex.h"
 
 char	**get_env_path(char *envp[])

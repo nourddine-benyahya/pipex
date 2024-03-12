@@ -1,4 +1,4 @@
-SRC = Mandatory/envpath.c Mandatory/helper.c Mandatory/parsing.c Mandatory/pipex.c Mandatory/process_fun.cc
+SRC = Mandatory/envpath.c Mandatory/helper.c Mandatory/parsing.c Mandatory/pipex.c Mandatory/process_funs.c
 OBJ = $(SRC:.c=.o)
 
 CC = cc
@@ -9,12 +9,10 @@ NAME = pipex
 
 LIBFT = Extra-library/libft.a
 
-
-
 all : $(NAME)
 
 $(LIBFT):
-    make -C Extra-library all
+	make -C Extra-library all
 
 $(NAME) : $(OBJ) $(LIBFT)
 	$(CC) $(CFLAGS) -o $(NAME) $(OBJ) $(LIBFT)
