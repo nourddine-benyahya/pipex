@@ -6,17 +6,11 @@
 /*   By: nbenyahy <nbenyahy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/06 16:12:56 by nbenyahy          #+#    #+#             */
-/*   Updated: 2024/03/10 21:13:32 by nbenyahy         ###   ########.fr       */
+/*   Updated: 2024/03/12 06:02:54 by nbenyahy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Extra-Library/libft.h"
 #include "pipex.h"
-
-static int	issep(char a, char b)
-{
-	return (a == '\\' && b == '\'');
-}
 
 static void	searchandreplaice(char *ptr)
 {
@@ -48,6 +42,16 @@ static void	handlquote(char *str, int *i, int *start, t_list **list)
 	*start = *i + 1;
 }
 
+static void	manipulations(char *str, int *i, int *start, t_list **list)
+{
+	if (str[*i + 1] == '\0')
+		(*i)++;
+	ft_lstadd_back(list, ft_lstnew(ft_substr(str, *start, *i - *start)));
+	while (str[*i] == ' ' && str[*i + 1] == ' ')
+		(*i)++;
+	*start = *i + 1;
+}
+
 static t_list	*extrasplit(char *str)
 {
 	t_list	*list;
@@ -55,20 +59,19 @@ static t_list	*extrasplit(char *str)
 	int		start;
 
 	i = 0;
-	start = 0;
 	list = NULL;
+	while (str[i] == ' ')
+		i++;
+	start = i;
 	while (str[i])
 	{
 		while (str[i] && issep(str[i], str[i + 1]))
 			searchandreplaice(str + i++);
 		if (str[i] == ' ' || str[i + 1] == '\0')
 		{
-			if (str[i + 1] == '\0')
-				i++;
-			ft_lstadd_back(&list, ft_lstnew(ft_substr(str, start, i - start)));
+			manipulations(str, &i, &start, &list);
 			if (str[i] == '\0')
 				return (list);
-			start = i + 1;
 		}
 		else if (str[i] && str[i] == 39)
 			handlquote(str, &i, &start, &list);
@@ -77,10 +80,9 @@ static t_list	*extrasplit(char *str)
 	return (list);
 }
 
-
 char	**cmdsplit(char *cmd)
 {
-	t_list	*list = NULL;
+	t_list	*list;
 	t_list	*tmp;
 	char	*str;
 	char	**arr;
@@ -91,8 +93,9 @@ char	**cmdsplit(char *cmd)
 	list = extrasplit(cmd);
 	free(str);
 	tmp = list;
-	int siz = ft_lstsize(tmp);
 	arr = malloc((ft_lstsize(tmp) + 1) * sizeof(char *));
+	if (!arr)
+		return (NULL);
 	i = 0;
 	while (tmp)
 	{
@@ -101,7 +104,7 @@ char	**cmdsplit(char *cmd)
 		i++;
 	}
 	arr[i] = NULL;
-	ft_lstclear(&list,free);
+	ft_lstclear(&list, free);
 	return (arr);
 }
 
@@ -116,21 +119,21 @@ char	**cmdsplit(char *cmd)
 // 	int i = 0;
 // 	while (arr[i])
 // 	{
-// 		printf("%s\n", arr[i]);
+// 		printf("..%s..\n", arr[i]);
 // 		i++;
 // 	}
 
 // 	 i = 0;
 // 	while (arr2[i])
 // 	{
-// 		printf("%s\n", arr2[i]);
+// 		printf("..%s..\n", arr2[i]);
 // 		i++;
 // 	}
 
 // 	 i = 0;
 // 	while (arr3[i])
 // 	{
-// 		printf("%s\n", arr3[i]);
+// 		printf("..%s..\n", arr3[i]);
 // 		i++;
 // 	}
 // 	// system("leaks a.out");
