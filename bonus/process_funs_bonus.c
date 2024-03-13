@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   process_funs.c                                     :+:      :+:    :+:   */
+/*   process_funs_bonus.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nbenyahy <nbenyahy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 06:06:43 by nbenyahy          #+#    #+#             */
-/*   Updated: 2024/03/13 01:04:04 by nbenyahy         ###   ########.fr       */
+/*   Updated: 2024/03/13 09:29:09 by nbenyahy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "pipex_bonus.h"
 
 char	*check_cmd_access(char *cmd, char **fullpath)
 {
@@ -65,7 +65,8 @@ int	open_pipes(t_var *var, int argc)
 int	duping(t_var *var, int argc, char *argv[])
 {
 	var->io[1] = open(argv[argc - 1], O_RDWR | O_TRUNC | O_CREAT, 0777);
-	var->io[0] = open(argv[1], O_RDWR);
+	if (strcmp(argv[1], "here_doc") != 0)
+		var->io[0] = open(argv[1], O_RDWR);
 	if (var->i == 2)
 	{
 		dup2(var->io[0], STDIN_FILENO);
@@ -85,12 +86,15 @@ int	duping(t_var *var, int argc, char *argv[])
 	return (0);
 }
 
-int	wait_childes(t_var *var, int argc)
+int	wait_childes(t_var *var, int argc, char *argv[])
 {
 	int	status;
 
 	status = 0;
-	var->i = 2;
+	if (strcmp(argv[1], "here_doc") == 0)
+		var->i = 3;
+	else
+		var->i = 2;
 	while (var->i < argc - 1)
 	{
 		if (waitpid(var->pids[var->i++ - 2], &status, 0) == -1)

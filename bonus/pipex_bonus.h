@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.h                                            :+:      :+:    :+:   */
+/*   pipex_bonus.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nbenyahy <nbenyahy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/07 18:55:04 by nbenyahy          #+#    #+#             */
-/*   Updated: 2024/03/13 01:04:17 by nbenyahy         ###   ########.fr       */
+/*   Updated: 2024/03/13 09:29:25 by nbenyahy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PIPEX_H
-# define PIPEX_H
+#ifndef PIPEX_BONUS_H
+# define PIPEX_BONUS_H
 
 # include "libft.h"
 # include <stdio.h>
@@ -36,5 +36,7 @@ char	*check_cmd_access(char *cmd, char **fullpath);
 void	close_all(t_var *var, int argc);
 int		open_pipes(t_var *var, int argc);
 int		duping(t_var *var, int argc, char *argv[]);
-int		wait_childes(t_var *var, int argc);
+int		wait_childes(t_var *var, int argc, char *argv[]);
+void	here_doc(t_var *var, char *argv[]);
+
 #endif
