@@ -6,7 +6,7 @@
 /*   By: nbenyahy <nbenyahy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/13 08:45:56 by nbenyahy          #+#    #+#             */
-/*   Updated: 2024/03/13 09:30:46 by nbenyahy         ###   ########.fr       */
+/*   Updated: 2024/03/14 00:44:50 by nbenyahy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void	read_stdin(t_var *var, char *argv[])
 		ft_printf("heredoc>");
 		str = get_next_line(STDIN_FILENO);
 		tmp = ft_strjoin(argv[2], "\n");
-		if (strcmp(str, tmp) == 0)
+		if (ft_strncmp(str, tmp, ft_strlen(str)) == 0)
 		{
 			free(tmp);
 			free(str);

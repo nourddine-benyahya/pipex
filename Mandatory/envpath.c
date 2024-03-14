@@ -6,7 +6,7 @@
 /*   By: nbenyahy <nbenyahy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/07 19:09:27 by nbenyahy          #+#    #+#             */
-/*   Updated: 2024/03/12 07:41:30 by nbenyahy         ###   ########.fr       */
+/*   Updated: 2024/03/14 01:35:20 by nbenyahy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,10 @@ char	**get_env_path(char *envp[])
 	char	*backup;
 	int		i;
 
-	while (!ft_strnstr(*envp, "PATH=", 5))
-		envp++; 
+	while (*envp != NULL && !ft_strnstr(*envp, "PATH=", 5))
+		envp++;
+	if (*envp == NULL)
+		return (NULL);
 	helper = ft_substr(*envp, 5, ft_strlen(*envp) - 5);
 	if (!helper)
 		return (NULL);
