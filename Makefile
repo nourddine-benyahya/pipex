@@ -12,21 +12,19 @@ CC = cc
 CFLAGS = -Wall -Wextra -Werror -I./extra_libft
 RM = rm -rf
 NAME = pipex
-NAMEB = pipex_bonus
+# NAMEB = pipex
 LIBFT = extra_libft/libft.a
 
 all : $(NAME)
 
-bonus : $(NAMEB)
+bonus : $(OBJB) $(NAME) $(LIBFT)
+	$(CC) $(CFLAGS) -o $(NAME) $(OBJB) $(LIBFT)
 
 $(LIBFT):
 	make -C extra_libft all
 
 $(NAME) : $(OBJ) $(LIBFT)
 	$(CC) $(CFLAGS) -o $(NAME) $(OBJ) $(LIBFT)
-
-$(NAMEB) : $(OBJB) $(LIBFT)
-	$(CC) $(CFLAGS) -o $(NAMEB) $(OBJB) $(LIBFT)
 
 %.o : %.c
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -39,7 +37,7 @@ clean :
 fclean : clean
 	make -C extra_libft fclean
 	$(RM) $(NAME)
-	$(RM) $(NAMEB)
+# $(RM) $(NAMEB)
 
 re : fclean all
 
