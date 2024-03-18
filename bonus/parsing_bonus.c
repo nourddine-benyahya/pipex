@@ -6,7 +6,7 @@
 /*   By: nbenyahy <nbenyahy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/06 16:12:56 by nbenyahy          #+#    #+#             */
-/*   Updated: 2024/03/13 09:29:02 by nbenyahy         ###   ########.fr       */
+/*   Updated: 2024/03/18 01:04:19 by nbenyahy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@ static void	searchandreplaice(char *ptr)
 
 static void	handlquote(char *str, int *i, int *start, t_list **list)
 {
+	char	*temp;
+
 	(*i)++;
 	(*start) = *i; 
 	while (str[*i] && (str[*i] != 39 || issep(str[*i], str[*i + 1])))
@@ -38,15 +40,25 @@ static void	handlquote(char *str, int *i, int *start, t_list **list)
 			searchandreplaice(str + *i);
 		(*i)++;
 	}
-	ft_lstadd_back(list, ft_lstnew(ft_substr(str, *start, *i - *start)));
+	temp = ft_substr(str, *start, *i - *start);
+	if (ft_strlen(temp) != 0)
+		ft_lstadd_back(list, ft_lstnew(temp));
+	else
+		free(temp);
 	*start = *i + 1;
 }
 
 static void	manipulations(char *str, int *i, int *start, t_list **list)
 {
+	char	*temp;
+
 	if (str[*i + 1] == '\0')
 		(*i)++;
-	ft_lstadd_back(list, ft_lstnew(ft_substr(str, *start, *i - *start)));
+	temp = ft_substr(str, *start, *i - *start);
+	if (ft_strlen(temp) != 0)
+		ft_lstadd_back(list, ft_lstnew(temp));
+	else
+		free(temp);
 	while (str[*i] == ' ' && str[*i + 1] == ' ')
 		(*i)++;
 	*start = *i + 1;
@@ -112,10 +124,10 @@ char	**cmdsplit(char *cmd)
 // {
 // 	char **arr;
 // 	arr = cmdsplit(argv[1]);
-// 	char **arr2;
-// 	arr2 = cmdsplit(argv[2]);
-// 	char **arr3;
-// 	arr3 = cmdsplit(argv[3]);
+// 	// char **arr2;
+// 	// arr2 = cmdsplit(argv[2]);
+// 	// char **arr3;
+// 	// arr3 = cmdsplit(argv[3]);
 // 	int i = 0;
 // 	while (arr[i])
 // 	{
@@ -123,18 +135,18 @@ char	**cmdsplit(char *cmd)
 // 		i++;
 // 	}
 
-// 	 i = 0;
-// 	while (arr2[i])
-// 	{
-// 		printf("..%s..\n", arr2[i]);
-// 		i++;
-// 	}
+// 	//  i = 0;
+// 	// while (arr2[i])
+// 	// {
+// 	// 	printf("..%s..\n", arr2[i]);
+// 	// 	i++;
+// 	// }
 
-// 	 i = 0;
-// 	while (arr3[i])
-// 	{
-// 		printf("..%s..\n", arr3[i]);
-// 		i++;
-// 	}
+// 	//  i = 0;
+// 	// while (arr3[i])
+// 	// {
+// 	// 	printf("..%s..\n", arr3[i]);
+// 	// 	i++;
+// 	// }
 // 	// system("leaks a.out");
 // }

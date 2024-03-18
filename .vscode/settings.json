@@ -1,7 +1,0 @@
-{
-    "files.associations": {
-        "libft.h": "c",
-        "_size_t.h": "c",
-        "pipex_bonus.h": "c"
-    }
-}
