@@ -6,7 +6,7 @@
 /*   By: nbenyahy <nbenyahy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 17:36:06 by nbenyahy          #+#    #+#             */
-/*   Updated: 2024/03/14 01:43:06 by nbenyahy         ###   ########.fr       */
+/*   Updated: 2024/03/24 01:53:36 by nbenyahy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,11 +74,11 @@ int	main(int argc, char *argv[], char *envp[])
 		return (ft_printf("args number less then 5\n"));
 	if (ft_strncmp(argv[1], "here_doc", ft_strlen(argv[1])) != 0)
 	{
-		if (access(argv[1], F_OK) == -1)
-		{
-			perror("input file not Exist");
-			return (127);
-		}
+		if (access(argv[1], F_OK | R_OK) == -1)
+			return (perror("input file err"), 1);
 	}
+	if (access(argv[argc - 1], F_OK) != -1 && \
+		access(argv[argc - 1], W_OK) == -1)
+		return (perror("output file err"), 1);
 	return (helper(argc, argv, envp));
 }

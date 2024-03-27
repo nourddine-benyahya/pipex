@@ -6,7 +6,7 @@
 /*   By: nbenyahy <nbenyahy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 06:06:43 by nbenyahy          #+#    #+#             */
-/*   Updated: 2024/03/15 22:57:46 by nbenyahy         ###   ########.fr       */
+/*   Updated: 2024/03/24 01:40:38 by nbenyahy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,8 +64,8 @@ int	open_pipes(t_var *var, int argc)
 
 int	duping(t_var *var, int argc, char *argv[])
 {
-	var->io[1] = open(argv[argc - 1], O_RDWR | O_TRUNC | O_CREAT, 0777);
-	var->io[0] = open(argv[1], O_RDWR);
+	var->io[1] = open(argv[argc - 1], O_WRONLY | O_TRUNC | O_CREAT, 0777);
+	var->io[0] = open(argv[1], O_RDONLY);
 	if (var->i == 2)
 	{
 		dup2(var->io[0], STDIN_FILENO);
