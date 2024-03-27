@@ -1,6 +1,6 @@
-# `pipex`
+# pipex
 
-## `Overview`
+## Overview
 
 Welcome to the Pipex project! The purpose of this project is the discovery in detail UNIX mechanism - `pipe`, processes, and inter-process communication in Unix-like operating systems.
 In this README, we'll discuss the key concepts covered in the Pipex project
